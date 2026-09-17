@@ -8,15 +8,15 @@ def instance_guard(max_instances : int, is_singleton : bool) -> Callable:
     elif is_singleton:
         max_instances = 1
 
-    def decorator(target : type) -> type:
-        if type(target) != type:
+    def decorator(target : type) -> object:
+        if isinstance(target,function):
             raise TypeError(f"<{Path(__file__).name}>/[{type(instance_guard).__name__}:{instance_guard.__name__}] -> Target decorated with '@{instance_guard.__name__}' must be class!!!'")
 
         class ProxyClass(ABC):
             _max_instance_count : int = max_instances
             _instance_count : int = 0
 
-            def __new__(proxy_cls, *args : Any, **kwargs : Any) -> type: # noqa
+            def __new__(proxy_cls, *args : Any, **kwargs : Any) -> object: # noqa
                 instance: type = target(*args, **kwargs)
 
                 ProxyClass._instance_count += 1
